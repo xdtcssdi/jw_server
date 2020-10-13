@@ -17,6 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * @author maqh
+ * @date 2019/9/6 16:41
+ */
 public class Generator {
     /**
      * <p>
@@ -45,7 +49,7 @@ public class Generator {
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir") ;
         gc.setOutputDir(projectPath + "/src/main/java");
-        gc.setAuthor("x");
+        gc.setAuthor("xx");
         gc.setOpen(false);
         gc.setFileOverride(true);//是否覆盖文件
         gc.setBaseResultMap(true); // xml resultmap
@@ -113,7 +117,6 @@ public class Generator {
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setEntityLombokModel(true);
         strategy.setRestControllerStyle(true);
-
 
         // 公共父类
         // 写于父类中的公共字段

@@ -2,12 +2,6 @@ package com.jw.common;
 
 import lombok.Data;
 
-/**
- * JsonBean class
- *
- * @author maqh
- * @date 2019/7/29
- */
 @Data
 public class JsonBean {
     private Integer code = 200;

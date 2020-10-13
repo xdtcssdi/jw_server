@@ -1,11 +1,5 @@
 package com.jw.common;
 
-/**
- * ResultCode class
- *
- * @author maqh
- * @date 2019/8/1
- */
 public enum ResultCode {
     //成功返回结果
     SERVICE_OK(200,"成功！"),
