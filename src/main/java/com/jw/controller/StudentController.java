@@ -40,20 +40,32 @@ public class StudentController {
 
     @ApiOperation(value = "新增")
     @PostMapping()
-    public int add(@RequestBody Student student) {
-        return studentService.add(student);
+    public Response add(@RequestBody Student student) {
+        int add = studentService.add(student);
+        if (add==1){
+            return Response.yes(1);
+        }
+        return Response.no();
     }
 
     @ApiOperation(value = "删除")
     @DeleteMapping("{id}")
-    public int delete(@PathVariable("id") Long id) {
-        return studentService.delete(id);
+    public Response delete(@PathVariable("id") Long id) {
+        int delete = studentService.delete(id);
+        if (delete!=0){
+            return Response.yes(1);
+        }
+        return Response.no();
     }
 
     @ApiOperation(value = "更新")
     @PutMapping()
-    public int update(@RequestBody Student student) {
-        return studentService.updateData(student);
+    public Response update(@RequestBody Student student) {
+        int i = studentService.updateData(student);
+        if (i!=0){
+            return Response.yes(1);
+        }
+        return Response.no();
     }
 
     @ApiOperation(value = "查询分页数据")
@@ -62,15 +74,23 @@ public class StudentController {
             @ApiImplicitParam(name = "pageCount", value = "每页条数")
     })
     @GetMapping()
-    public IPage<Student> findListByPage(@RequestParam Integer page,
+    public Response findListByPage(@RequestParam Integer page,
                                          @RequestParam Integer pageCount) {
-        return studentService.findListByPage(page, pageCount);
+        IPage<Student> listByPage = studentService.findListByPage(page, pageCount);
+        if (listByPage!=null && listByPage.getSize()!=0){
+            return Response.yes(listByPage);
+        }
+        return Response.no();
     }
 
     @ApiOperation(value = "id查询")
     @GetMapping("{id}")
-    public Student findById(@PathVariable Long id) {
-        return studentService.findById(id);
+    public Response findById(@PathVariable Long id) {
+        Student byId = studentService.findById(id);
+        if (byId!=null){
+            return Response.yes(byId);
+        }
+        return Response.no();
     }
 
     @GetMapping("/login")
@@ -84,4 +104,5 @@ public class StudentController {
             return Response.yes(one);
         return Response.no("登录失败");
     }
+
 }

@@ -15,7 +15,7 @@
 
         <!-- 通用查询结果列 -->
         <sql id="Base_Column_List">
-            id, exam_id, classes, student_id, req, s_time, e_time
+            exam_id, classes, student_id, req, s_time, e_time, id
         </sql>
 
 </mapper>

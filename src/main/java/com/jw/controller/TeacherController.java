@@ -1,5 +1,6 @@
 package com.jw.controller;
 
+import com.jw.Response;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.web.bind.annotation.*;
@@ -35,20 +36,32 @@ public class TeacherController {
 
     @ApiOperation(value = "新增")
     @PostMapping()
-    public int add(@RequestBody Teacher teacher){
-        return teacherService.add(teacher);
+    public Response add(@RequestBody Teacher teacher){
+        int add = teacherService.add(teacher);
+        if (add!=0){
+            return Response.yes(1);
+        }
+        return Response.no();
     }
 
     @ApiOperation(value = "删除")
     @DeleteMapping("{id}")
-    public int delete(@PathVariable("id") Long id){
-        return teacherService.delete(id);
+    public Response delete(@PathVariable("id") Long id){
+        int delete = teacherService.delete(id);
+        if (delete!=0){
+            return Response.yes();
+        }
+        return Response.no();
     }
 
     @ApiOperation(value = "更新")
     @PutMapping()
-    public int update(@RequestBody Teacher teacher){
-        return teacherService.updateData(teacher);
+    public Response update(@RequestBody Teacher teacher){
+        int i = teacherService.updateData(teacher);
+        if (i!=0){
+            return Response.yes();
+        }
+        return Response.no();
     }
 
     @ApiOperation(value = "查询分页数据")
@@ -57,15 +70,23 @@ public class TeacherController {
         @ApiImplicitParam(name = "pageCount", value = "每页条数")
     })
     @GetMapping()
-    public IPage<Teacher> findListByPage(@RequestParam Integer page,
+    public Response findListByPage(@RequestParam Integer page,
                                    @RequestParam Integer pageCount){
-        return teacherService.findListByPage(page, pageCount);
+        IPage<Teacher> listByPage = teacherService.findListByPage(page, pageCount);
+        if (listByPage!=null && listByPage.getSize()!=0){
+            return Response.yes(listByPage);
+        }
+        return Response.no();
     }
 
     @ApiOperation(value = "id查询")
     @GetMapping("{id}")
-    public Teacher findById(@PathVariable Long id){
-        return teacherService.findById(id);
+    public Response findById(@PathVariable Long id){
+        Teacher byId = teacherService.findById(id);
+        if (byId!=null){
+            return Response.yes(byId);
+        }
+        return Response.no();
     }
 
 }

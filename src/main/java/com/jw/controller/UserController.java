@@ -1,5 +1,12 @@
 package com.jw.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.jw.Response;
+import com.jw.entity.Student;
+import com.jw.entity.Teacher;
+import com.jw.service.IFileService;
+import com.jw.service.IStudentService;
+import com.jw.service.ITeacherService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +20,9 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 /**
  * <p>
@@ -26,46 +36,87 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-
-    private Logger log = LoggerFactory.getLogger(getClass());
+    @Resource
+    private IStudentService studentService;
+    @Resource
+    private ITeacherService iTeacherService;
+    @Resource
+    private IUserService iUserService;
 
     @Resource
-    private IUserService userService;
+    private IFileService fileService;
 
+    @GetMapping("/login")
+    public Response login(@RequestParam("username") String username,
+                          @RequestParam("password") String password,
+                          @RequestParam("type") String type) {
 
-    @ApiOperation(value = "新增")
-    @PostMapping()
-    public int add(@RequestBody User user){
-        return userService.add(user);
+        if ("student".equals(type)){
+            QueryWrapper<Student> w = new QueryWrapper<>();
+            w.eq("username", username).eq("password", password);
+            Student one = studentService.getOne(w);
+            if (one!=null)
+                return Response.yes(one);
+            return Response.no("登录失败");
+        }
+        if ("admin".equals(type)){
+            QueryWrapper<User> w = new QueryWrapper<>();
+            w.eq("name", username).eq("password", password);
+            User one = iUserService.getOne(w);
+            if (one!=null)
+                return Response.yes(one);
+            return Response.no("登录失败");
+        }
+
+        if ("teacher".equals(type)){
+            QueryWrapper<Teacher> w = new QueryWrapper<>();
+            w.eq("username", username).eq("password", password);
+            Teacher one = iTeacherService.getOne(w);
+            if (one!=null)
+                return Response.yes(one);
+            return Response.no("登录失败");
+        }
+        return Response.no("登录失败");
     }
 
-    @ApiOperation(value = "删除")
-    @DeleteMapping("{id}")
-    public int delete(@PathVariable("id") Long id){
-        return userService.delete(id);
+    @PostMapping("/upload_make_up")
+    @ResponseBody
+    public boolean upload_make_up(@RequestParam("file") MultipartFile file) {
+        boolean a = false;
+        String fileName = file.getOriginalFilename();
+        try {
+            a = fileService.batchImportUser(fileName, file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  a;
     }
 
-    @ApiOperation(value = "更新")
-    @PutMapping()
-    public int update(@RequestBody User user){
-        return userService.updateData(user);
+    @PostMapping("/upload_student")
+    @ResponseBody
+    public boolean upload_student(@RequestParam("file") MultipartFile file) {
+        boolean a = false;
+        String fileName = file.getOriginalFilename();
+        try {
+            a = fileService.batchImportStudent(fileName, file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  a;
     }
 
-    @ApiOperation(value = "查询分页数据")
-    @ApiImplicitParams({
-        @ApiImplicitParam(name = "page", value = "页码"),
-        @ApiImplicitParam(name = "pageCount", value = "每页条数")
-    })
-    @GetMapping()
-    public IPage<User> findListByPage(@RequestParam Integer page,
-                                   @RequestParam Integer pageCount){
-        return userService.findListByPage(page, pageCount);
+    @PostMapping("/upload_teacher")
+    @ResponseBody
+    public boolean upload_teacher(@RequestParam("file") MultipartFile file) {
+        boolean a = false;
+        String fileName = file.getOriginalFilename();
+        try {
+            a = fileService.batchImportTeacher(fileName, file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  a;
     }
 
-    @ApiOperation(value = "id查询")
-    @GetMapping("{id}")
-    public User findById(@PathVariable Long id){
-        return userService.findById(id);
-    }
 
 }
