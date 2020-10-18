@@ -25,8 +25,9 @@ public class MakeupExamServiceImpl extends ServiceImpl<MakeupExamMapper, MakeupE
     public  IPage<MakeupExam> findListByPage(Integer page, Integer pageCount){
         IPage<MakeupExam> wherePage = new Page<>(page, pageCount);
         MakeupExam where = new MakeupExam();
+        QueryWrapper<MakeupExam> query = Wrappers.query(where);
 
-        return baseMapper.selectPage(wherePage, Wrappers.query(where));
+        return baseMapper.selectPage(wherePage, query);
     }
 
     @Override
