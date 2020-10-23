@@ -1,5 +1,6 @@
 package com.jw.controller;
 
+import com.jw.Response;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.web.bind.annotation.*;
@@ -35,20 +36,29 @@ public class ExamController {
 
     @ApiOperation(value = "新增")
     @PostMapping()
-    public int add(@RequestBody Exam exam){
-        return examService.add(exam);
+    public Response add(@RequestBody Exam exam){
+        int add = examService.add(exam);
+        if (add==0)
+            return Response.no();
+        return Response.yes(add);
     }
 
     @ApiOperation(value = "删除")
     @DeleteMapping("{id}")
-    public int delete(@PathVariable("id") Long id){
-        return examService.delete(id);
+    public Response delete(@PathVariable("id") Long id){
+        int delete = examService.delete(id);
+        if(delete==0)
+            return Response.no();
+        return Response.yes();
     }
 
     @ApiOperation(value = "更新")
     @PutMapping()
-    public int update(@RequestBody Exam exam){
-        return examService.updateData(exam);
+    public Response update(@RequestBody Exam exam){
+        int i = examService.updateData(exam);
+        if (i==0)
+            return Response.no();
+        return Response.yes();
     }
 
     @ApiOperation(value = "查询分页数据")
@@ -57,15 +67,21 @@ public class ExamController {
         @ApiImplicitParam(name = "pageCount", value = "每页条数")
     })
     @GetMapping()
-    public IPage<Exam> findListByPage(@RequestParam Integer page,
+    public Response findListByPage(@RequestParam Integer page,
                                    @RequestParam Integer pageCount){
-        return examService.findListByPage(page, pageCount);
+        IPage<Exam> listByPage = examService.findListByPage(page, pageCount);
+        if (listByPage!=null)
+            return Response.yes(listByPage);
+        return Response.no();
     }
 
     @ApiOperation(value = "id查询")
     @GetMapping("{id}")
-    public Exam findById(@PathVariable Long id){
-        return examService.findById(id);
+    public Response findById(@PathVariable Long id){
+        Exam byId = examService.findById(id);
+        if (byId==null)
+            return Response.no();
+        return Response.yes(byId);
     }
 
 }

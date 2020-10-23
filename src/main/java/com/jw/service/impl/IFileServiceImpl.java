@@ -1,12 +1,10 @@
 package com.jw.service.impl;
 
+import com.jw.entity.Exam;
 import com.jw.entity.MakeupExam;
 import com.jw.entity.Student;
 import com.jw.entity.Teacher;
-import com.jw.service.IFileService;
-import com.jw.service.IMakeupExamService;
-import com.jw.service.IStudentService;
-import com.jw.service.ITeacherService;
+import com.jw.service.*;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -29,6 +27,9 @@ public class IFileServiceImpl implements IFileService {
     private IStudentService studentService;
     @Autowired
     private ITeacherService teacherService;
+    @Autowired
+    private IExamService examService;
+
     @Override
     public boolean batchImportUser(String fileName, MultipartFile file) throws Exception {
         boolean notNull = false;
@@ -172,4 +173,45 @@ public class IFileServiceImpl implements IFileService {
         }
 
         return notNull;    }
+
+    @Override
+    public boolean batchImportExam(String fileName, MultipartFile file) throws Exception {
+        boolean notNull = false;
+
+        if (!fileName.matches("^.+\\.(?i)(xls)$") && !fileName.matches("^.+\\.(?i)(xlsx)$")) {
+            throw new Exception("上传文件格式不正确");
+        }
+        boolean isExcel2003 = true;
+        if (fileName.matches("^.+\\.(?i)(xlsx)$")) {
+            isExcel2003 = false;
+        }
+        InputStream is = file.getInputStream();
+        Workbook wb = null;
+        if (isExcel2003) {
+            wb = new HSSFWorkbook(is);
+        } else {
+            wb = new XSSFWorkbook(is);
+        }
+        Sheet sheet = wb.getSheetAt(0);
+        if(sheet!=null){
+            notNull = true;
+        }
+
+        for (int r = 0; r <= Objects.requireNonNull(sheet).getLastRowNum(); r++) {
+            Row row = sheet.getRow(r);
+            if (row == null){
+                continue;
+            }
+
+            int examid = (int)row.getCell(1).getNumericCellValue();
+            int teacherid = (int)row.getCell(2).getNumericCellValue();
+
+            Exam exam = new Exam();
+            exam.setExamId(examid);
+            exam.setTeacherId(teacherid);
+            examService.add(exam);
+        }
+
+        return notNull;
+    }
 }

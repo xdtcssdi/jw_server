@@ -59,7 +59,7 @@ public class UserController {
     private IFileService fileService;
 
     @GetMapping("/sendMail")
-    public void sendMail2(@RequestParam("to") String addressee, @RequestParam("title") String title, @RequestParam("body") String body) {
+    public void sendMail2(@RequestParam(value="to") String[] addressee, @RequestParam("body") String body) {
         //发邮件
         SimpleMailMessage message = new SimpleMailMessage();
         //发件人邮件地址(上面获取到的，也可以直接填写,string类型)
@@ -67,7 +67,7 @@ public class UserController {
         //收件人邮件地址
         message.setTo(addressee);
         //邮件主题
-        message.setSubject(title);
+        message.setSubject("标题");
         //邮件正文
         message.setText(body);
         javaMailSender.send(message);
@@ -145,6 +145,20 @@ public class UserController {
         }
         return  a;
     }
+
+    @PostMapping("/upload_exam")
+    @ResponseBody
+    public boolean upload_exam(@RequestParam("file") MultipartFile file) {
+        boolean a = false;
+        String fileName = file.getOriginalFilename();
+        try {
+            a = fileService.batchImportExam(fileName, file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  a;
+    }
+
 
 
 }
