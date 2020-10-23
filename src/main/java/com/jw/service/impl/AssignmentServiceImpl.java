@@ -1,5 +1,6 @@
 package com.jw.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jw.entity.Assignment;
 import com.jw.mapper.AssignmentMapper;
 import com.jw.service.IAssignmentService;
@@ -26,6 +27,14 @@ public class AssignmentServiceImpl extends ServiceImpl<AssignmentMapper, Assignm
         Assignment where = new Assignment();
 
         return   baseMapper.selectPage(wherePage, Wrappers.query(where));
+    }
+
+    @Override
+    public IPage<Assignment> findListByPage(Integer page, Integer pageCount, Integer id) {
+        IPage<Assignment> wherePage = new Page<>(page, pageCount);
+        QueryWrapper<Assignment> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("student_id", id);
+        return  baseMapper.selectPage(wherePage, queryWrapper);
     }
 
     @Override

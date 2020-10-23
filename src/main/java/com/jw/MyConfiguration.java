@@ -8,6 +8,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 @Configuration
 public class MyConfiguration extends WebMvcConfigurerAdapter {
@@ -23,5 +24,11 @@ public class MyConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public PaginationInterceptor paginationInterceptor(){
         return new PaginationInterceptor();
+    }
+
+    @Bean
+    public ServerEndpointExporter serverEndpointExporter()
+    {
+        return new ServerEndpointExporter();
     }
 }

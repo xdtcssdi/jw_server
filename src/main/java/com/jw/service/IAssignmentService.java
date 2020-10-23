@@ -24,6 +24,16 @@ public interface IAssignmentService extends IService<Assignment> {
     IPage<Assignment> findListByPage(Integer page, Integer pageCount);
 
     /**
+     * 查询分页数据
+     *
+     * @param page      页码
+     * @param pageCount 每页条数
+     * @param id student_id
+     * @return IPage<Assignment>
+     */
+    IPage<Assignment> findListByPage(Integer page, Integer pageCount, Integer id);
+
+    /**
      * 添加
      *
      * @param assignment 

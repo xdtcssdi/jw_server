@@ -1,6 +1,7 @@
 package com.jw.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.jw.entity.Assignment;
 import com.jw.entity.MakeupExam;
 import com.jw.mapper.MakeupExamMapper;
 import com.jw.service.IMakeupExamService;
@@ -28,6 +29,14 @@ public class MakeupExamServiceImpl extends ServiceImpl<MakeupExamMapper, MakeupE
         QueryWrapper<MakeupExam> query = Wrappers.query(where);
 
         return baseMapper.selectPage(wherePage, query);
+    }
+
+    @Override
+    public IPage<MakeupExam> findListByPage(Integer page, Integer pageCount, Integer id) {
+        IPage<MakeupExam> wherePage = new Page<>(page, pageCount);
+        QueryWrapper<MakeupExam> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("student_id", id);
+        return  baseMapper.selectPage(wherePage, queryWrapper);
     }
 
     @Override

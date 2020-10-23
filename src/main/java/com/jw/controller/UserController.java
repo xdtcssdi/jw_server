@@ -9,6 +9,10 @@ import com.jw.service.IStudentService;
 import com.jw.service.ITeacherService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 import com.jw.service.IUserService;
 import com.jw.entity.User;
@@ -36,6 +40,14 @@ import java.io.File;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
+    @Autowired
+    private JavaMailSender javaMailSender;
+
+    //这一步是获取application.properties中设置的发件人邮箱地址
+    @Value("${spring.mail.username}")
+    private String username;
+
     @Resource
     private IStudentService studentService;
     @Resource
@@ -45,6 +57,22 @@ public class UserController {
 
     @Resource
     private IFileService fileService;
+
+    @GetMapping("/sendMail")
+    public void sendMail2(@RequestParam("to") String addressee, @RequestParam("title") String title, @RequestParam("body") String body) {
+        //发邮件
+        SimpleMailMessage message = new SimpleMailMessage();
+        //发件人邮件地址(上面获取到的，也可以直接填写,string类型)
+        message.setFrom(username);
+        //收件人邮件地址
+        message.setTo(addressee);
+        //邮件主题
+        message.setSubject(title);
+        //邮件正文
+        message.setText(body);
+        javaMailSender.send(message);
+
+    }
 
     @GetMapping("/login")
     public Response login(@RequestParam("username") String username,
@@ -59,7 +87,7 @@ public class UserController {
                 return Response.yes(one);
             return Response.no("登录失败");
         }
-        if ("admin".equals(type)){
+        if ("jw".equals(type)){
             QueryWrapper<User> w = new QueryWrapper<>();
             w.eq("name", username).eq("password", password);
             User one = iUserService.getOne(w);

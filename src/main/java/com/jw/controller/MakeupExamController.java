@@ -1,8 +1,11 @@
 package com.jw.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jw.Response;
+import com.jw.entity.Assignment;
 import com.jw.entity.Exam;
+import com.jw.mapper.MakeupExamMapper;
 import com.jw.service.IExamService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -72,20 +75,36 @@ public class MakeupExamController {
         return Response.no("更新失败" + makeupExam);
     }
 
+    @Resource
+    private MakeupExamMapper makeupExamMapper;
+
     @ApiOperation(value = "查询分页数据")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "page", value = "页码"),
-        @ApiImplicitParam(name = "pageCount", value = "每页条数")
+        @ApiImplicitParam(name = "pageCount", value = "每页条数"),
+        @ApiImplicitParam(name = "type", value = "类型"),
+        @ApiImplicitParam(name = "id", value = "ID")
     })
     @GetMapping()
     public Response findListByPage(@RequestParam Integer page,
-                                   @RequestParam Integer pageCount){
+                                   @RequestParam Integer pageCount,
+                                   @RequestParam String type,
+                                   @RequestParam Integer id){
 
-
-
-        IPage<MakeupExam> listByPage = makeupExamService.findListByPage(page, pageCount);
-
-        if (listByPage!=null && listByPage.getSize() != 0){
+        if (type.equals("student")){
+            IPage<MakeupExam> listByPage = makeupExamService.findListByPage(page, pageCount, id);
+            if (listByPage!=null)
+                return Response.yes(listByPage);
+        }else if (type.equals("teacher")){
+            int p = (page-1)*pageCount;
+            List<MakeupExam> makeupExams = makeupExamMapper.selectByMyWrapper1(p, pageCount, id);
+            int i = makeupExamMapper.count1(id);
+            IPage<MakeupExam> iPage = new Page<>();
+            iPage.setRecords(makeupExams);
+            iPage.setTotal(i);
+            return Response.yes(iPage);
+        }else{
+            IPage<MakeupExam> listByPage = makeupExamService.findListByPage(page, pageCount);
             return Response.yes(listByPage);
         }
         return Response.no();

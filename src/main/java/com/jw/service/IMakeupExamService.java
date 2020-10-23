@@ -23,6 +23,9 @@ public interface IMakeupExamService extends IService<MakeupExam> {
      */
     IPage<MakeupExam> findListByPage(Integer page, Integer pageCount);
 
+    IPage<MakeupExam> findListByPage(Integer page, Integer pageCount, Integer id);
+
+
     /**
      * 查询分页数据
      *
