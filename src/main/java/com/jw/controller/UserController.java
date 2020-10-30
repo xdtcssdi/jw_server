@@ -1,36 +1,28 @@
 package com.jw.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.jw.Response;
 import com.jw.entity.Student;
 import com.jw.entity.Teacher;
+import com.jw.entity.User;
 import com.jw.service.IFileService;
 import com.jw.service.IStudentService;
 import com.jw.service.ITeacherService;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
+import com.jw.service.IUserService;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
-import com.jw.service.IUserService;
-import com.jw.entity.User;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-
-import javax.annotation.Resource;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+import javax.annotation.Resource;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author x
@@ -59,7 +51,7 @@ public class UserController {
     private IFileService fileService;
 
     @GetMapping("/sendMail")
-    public void sendMail2(@RequestParam(value="to") String[] addressee, @RequestParam("body") String body) {
+    public void sendMail2(@RequestParam(value = "to") String[] addressee, @RequestParam("body") String body) {
         //发邮件
         SimpleMailMessage message = new SimpleMailMessage();
         //发件人邮件地址(上面获取到的，也可以直接填写,string类型)
@@ -72,35 +64,72 @@ public class UserController {
         message.setText(body);
         javaMailSender.send(message);
 
+
     }
+
+    @GetMapping("/userinfo")
+    public Response userinfo(@RequestParam("username") String username, @RequestParam("type") String type) {
+        if (type.equals("jw")) {
+            if (username != null) {
+                LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
+                userLambdaQueryWrapper.eq(User::getName, username);
+                User s = iUserService.getOne(userLambdaQueryWrapper);
+                if (s != null)
+                    return Response.yes(s);
+                return Response.no("获取用户信息失败");
+            }
+        }
+        if (type.equals("teacher")) {
+            if (username != null) {
+                LambdaQueryWrapper<Teacher> teacherLambdaQueryWrapper = new LambdaQueryWrapper<>();
+                teacherLambdaQueryWrapper.eq(Teacher::getUsername, username);
+                Teacher t = iTeacherService.getOne(teacherLambdaQueryWrapper);
+                if (t != null)
+                    return Response.yes(t);
+                return Response.no("获取用户信息失败");
+            }
+        }
+        if (type.equals("student")) {
+            if (username != null) {
+                LambdaQueryWrapper<Student> studentLambdaQueryWrapper = new LambdaQueryWrapper<>();
+                studentLambdaQueryWrapper.eq(Student::getUsername, username);
+                Student st = studentService.getOne(studentLambdaQueryWrapper);
+                if (st != null)
+                    return Response.yes(st);
+                return Response.no("获取用户信息失败");
+            }
+        }
+        return Response.no();
+    }
+
 
     @GetMapping("/login")
     public Response login(@RequestParam("username") String username,
                           @RequestParam("password") String password,
                           @RequestParam("type") String type) {
 
-        if ("student".equals(type)){
+        if ("student".equals(type)) {
             QueryWrapper<Student> w = new QueryWrapper<>();
             w.eq("username", username).eq("password", password);
             Student one = studentService.getOne(w);
-            if (one!=null)
+            if (one != null)
                 return Response.yes(one);
             return Response.no("登录失败");
         }
-        if ("jw".equals(type)){
+        if ("jw".equals(type)) {
             QueryWrapper<User> w = new QueryWrapper<>();
             w.eq("name", username).eq("password", password);
             User one = iUserService.getOne(w);
-            if (one!=null)
+            if (one != null)
                 return Response.yes(one);
             return Response.no("登录失败");
         }
 
-        if ("teacher".equals(type)){
+        if ("teacher".equals(type)) {
             QueryWrapper<Teacher> w = new QueryWrapper<>();
             w.eq("username", username).eq("password", password);
             Teacher one = iTeacherService.getOne(w);
-            if (one!=null)
+            if (one != null)
                 return Response.yes(one);
             return Response.no("登录失败");
         }
@@ -117,7 +146,7 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  a;
+        return a;
     }
 
     @PostMapping("/upload_student")
@@ -130,7 +159,7 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  a;
+        return a;
     }
 
     @PostMapping("/upload_teacher")
@@ -143,7 +172,7 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  a;
+        return a;
     }
 
     @PostMapping("/upload_exam")
@@ -156,9 +185,8 @@ public class UserController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return  a;
+        return a;
     }
-
 
 
 }
