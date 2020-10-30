@@ -2,6 +2,7 @@ package com.jw.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.api.R;
 import com.jw.Response;
 import com.jw.entity.Student;
 import com.jw.entity.Teacher;
@@ -11,7 +12,6 @@ import com.jw.service.IStudentService;
 import com.jw.service.ITeacherService;
 import com.jw.service.IUserService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -52,20 +52,24 @@ public class UserController {
     private IFileService fileService;
 
     @GetMapping("/sendMail")
-    public void sendMail2(@RequestParam(value = "to") String[] addressee, @RequestParam("body") String body) {
-        //发邮件
-        SimpleMailMessage message = new SimpleMailMessage();
-        //发件人邮件地址(上面获取到的，也可以直接填写,string类型)
-        message.setFrom(username);
-        //收件人邮件地址
-        message.setTo(addressee);
-        //邮件主题
-        message.setSubject("标题");
-        //邮件正文
-        message.setText(body);
-        javaMailSender.send(message);
+    public Response sendMail2(@RequestParam(value = "to") String[] addressee, @RequestParam("body") String body) {
+        try{
+            //发邮件
+            SimpleMailMessage message = new SimpleMailMessage();
+            //发件人邮件地址(上面获取到的，也可以直接填写,string类型)
+            message.setFrom(username);
+            //收件人邮件地址
+            message.setTo(addressee);
+            //邮件主题
+            message.setSubject("标题");
+            //邮件正文
+            message.setText(body);
+            javaMailSender.send(message);
+        }catch (Exception e){
+            return Response.no();
+        }
 
-
+        return Response.yes();
     }
 
     @GetMapping("/userinfo")
@@ -103,47 +107,6 @@ public class UserController {
         return Response.no();
     }
 
-    @ApiOperation(value = "更新")
-    @PutMapping()
-    public Response update(@RequestParam("username") String username, @RequestParam("password") String password, @RequestParam("type") String type) {
-        if (type.equals("jw")) {
-            if (username != null) {
-                LambdaQueryWrapper<User> userLambdaQueryWrapper = new LambdaQueryWrapper<>();
-                userLambdaQueryWrapper.eq(User::getName, username);
-                User u = iUserService.getOne(userLambdaQueryWrapper);
-                u.setPassword(password);
-                int s = iUserService.updateData(u);
-                if (s != 0)
-                    return Response.yes("成功");
-                return Response.no("获取用户信息失败");
-            }
-        }
-        if (type.equals("teacher")) {
-            if (username != null) {
-                LambdaQueryWrapper<Teacher> teacherLambdaQueryWrapper = new LambdaQueryWrapper<>();
-                teacherLambdaQueryWrapper.eq(Teacher::getUsername, username);
-                Teacher t = iTeacherService.getOne(teacherLambdaQueryWrapper);
-                t.setPassword(password);
-                int i = iTeacherService.updateData(t);
-                if (i != 0)
-                    return Response.yes("成功");
-                return Response.no("获取用户信息失败");
-            }
-        }
-        if (type.equals("student")) {
-            if (username != null) {
-                LambdaQueryWrapper<Student> studentLambdaQueryWrapper = new LambdaQueryWrapper<>();
-                studentLambdaQueryWrapper.eq(Student::getUsername, username);
-                Student s = studentService.getOne(studentLambdaQueryWrapper);
-                s.setPassword(password);
-                int st = studentService.updateData(s);
-                if (st != 0)
-                    return Response.yes("成功");
-                return Response.no("获取用户信息失败");
-            }
-        }
-        return Response.no();
-    }
 
     @GetMapping("/login")
     public Response login(@RequestParam("username") String username,
