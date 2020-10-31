@@ -203,8 +203,8 @@ public class IFileServiceImpl implements IFileService {
                 continue;
             }
 
-            int examid = (int)row.getCell(1).getNumericCellValue();
-            int teacherid = (int)row.getCell(2).getNumericCellValue();
+            int examid = (int)row.getCell(0).getNumericCellValue();
+            int teacherid = (int)row.getCell(1).getNumericCellValue();
 
             Exam exam = new Exam();
             exam.setExamId(examid);
