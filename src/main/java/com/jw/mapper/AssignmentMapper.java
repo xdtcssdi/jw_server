@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * <p>
- *  Mapper 接口
+ * Mapper 接口
  * </p>
  *
  * @author x
@@ -46,4 +46,26 @@ public interface AssignmentMapper extends BaseMapper<Assignment> {
             "WHERE\n" +
             "jw.teacher.id = #{id}")
     int findAssignmentByTeacherIdCount(@Param("id") Integer id);
+
+    @Select("SELECT\n" +
+            "assignment.*\n" +
+            "FROM\n" +
+            "makeup_exam\n" +
+            "JOIN assignment\n" +
+            "ON makeup_exam.id = assignment.m_id\n" +
+            "WHERE makeup_exam.id = #{id} limit #{currIndex} , #{pageSize}")
+    List<Assignment> findAssignmentByMId(@Param("currIndex") Integer page,
+                                         @Param("pageSize") Integer pageSize,
+                                         @Param("id") Integer id);
+
+    @Select("SELECT\n" +
+            "count(DISTINCT assignment.id)\n" +
+            "FROM\n" +
+            "makeup_exam\n" +
+            "JOIN assignment\n" +
+            "ON makeup_exam.id = assignment.m_id\n" +
+            "WHERE makeup_exam.id = #{id}")
+    int countAssignmentByMId(@Param("id") Integer id);
+
+
 }

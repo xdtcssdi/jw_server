@@ -95,24 +95,24 @@ public class MakeupExamController {
 
         int p = (page-1)*pageCount;
         if (type.equals("student")) {
-            List<MakeupExamUName> makeupExamUNames = makeupExamMapper.selectByMyWrapper2(p, pageCount, id);
-            int i = makeupExamMapper.count2(id);
+            List<MakeupExamUName> makeupExamUNames = makeupExamMapper.selectByStudent(p, pageCount, id);
+            int i = makeupExamMapper.countByStudent(id);
             IPage<MakeupExamUName> iPage = new Page<>();
             iPage.setRecords(makeupExamUNames);
             iPage.setTotal(i);
             return Response.yes(iPage);
         } else if (type.equals("teacher")) {
-            List<MakeupExamUName> makeupExams = makeupExamMapper.selectByMyWrapper1(p, pageCount, id);
-            int i = makeupExamMapper.count1(id);
+            List<MakeupExamUName> makeupExams = makeupExamMapper.selectByTeacher(p, pageCount, id);
+            int i = makeupExamMapper.counttByTeacher(id);
             IPage<MakeupExamUName> iPage = new Page<>();
             iPage.setRecords(makeupExams);
             iPage.setTotal(i);
             return Response.yes(iPage);
         } else {
 //            IPage<MakeupExam> listByPage = makeupExamService.findListByPage(page - 1, pageCount);
-            List<MakeupExamUName> makeupExamUNames = makeupExamMapper.selectByMyWrapper(p, pageCount);
+            List<MakeupExamUName> makeupExamUNames = makeupExamMapper.selectByAll(p, pageCount);
             System.out.println(makeupExamUNames);
-            int i = makeupExamMapper.count();
+            int i = makeupExamMapper.countByAll();
             IPage<MakeupExamUName> iPage = new Page<>();
             iPage.setRecords(makeupExamUNames);
             iPage.setTotal(i);

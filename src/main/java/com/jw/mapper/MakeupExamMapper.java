@@ -31,7 +31,7 @@ public interface MakeupExamMapper extends BaseMapper<MakeupExam> {
             "ON makeup_exam.exam_id = exam.exam_id \n" +
             "left JOIN teacher\n" +
             "ON exam.teacher_id = teacher.id limit #{currIndex} , #{pageSize}")
-    List<MakeupExamUName> selectByMyWrapper(@Param("currIndex") Integer page, @Param("pageSize") Integer pageSize);
+    List<MakeupExamUName> selectByAll(@Param("currIndex") Integer page, @Param("pageSize") Integer pageSize);
 
     @Select("SELECT\n" +
             "student.username AS susername,\n" +
@@ -47,7 +47,7 @@ public interface MakeupExamMapper extends BaseMapper<MakeupExam> {
             "ON exam.teacher_id = teacher.id\n" +
             "WHERE\n" +
             "teacher.id = #{id} limit #{currIndex} , #{pageSize}")
-    List<MakeupExamUName> selectByMyWrapper1(@Param("currIndex") Integer page,
+    List<MakeupExamUName> selectByTeacher(@Param("currIndex") Integer page,
                                              @Param("pageSize") Integer pageSize,
                                              @Param("id") Integer id);
 
@@ -64,7 +64,7 @@ public interface MakeupExamMapper extends BaseMapper<MakeupExam> {
             "JOIN teacher\n" +
             "ON exam.teacher_id = teacher.id\n" +
             "WHERE student.id = #{id} limit #{currIndex} , #{pageSize}")
-    List<MakeupExamUName> selectByMyWrapper2(@Param("currIndex") Integer page,
+    List<MakeupExamUName> selectByStudent(@Param("currIndex") Integer page,
                                              @Param("pageSize") Integer pageSize,
                                              @Param("id") Integer id);
 
@@ -80,7 +80,7 @@ public interface MakeupExamMapper extends BaseMapper<MakeupExam> {
             "ON exam.teacher_id = teacher.id\n" +
             "WHERE\n" +
             "teacher.id = #{id}")
-    int count1(@Param("id") Integer id);
+    int counttByTeacher(@Param("id") Integer id);
 
     @Select("SELECT\n" +
             "count(*)\n" +
@@ -92,7 +92,7 @@ public interface MakeupExamMapper extends BaseMapper<MakeupExam> {
             "ON makeup_exam.exam_id = exam.exam_id \n" +
             "left JOIN teacher\n" +
             "ON exam.teacher_id = teacher.id")
-    int count();
+    int countByAll();
 
     @Select("SELECT\n" +
             "count(*)\n" +
@@ -105,5 +105,5 @@ public interface MakeupExamMapper extends BaseMapper<MakeupExam> {
             "JOIN teacher\n" +
             "ON exam.teacher_id = teacher.id\n" +
             "WHERE student.id = #{id}")
-    int count2(@Param("id") Integer id);
+    int countByStudent(@Param("id") Integer id);
 }

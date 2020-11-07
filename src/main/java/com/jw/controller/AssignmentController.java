@@ -1,6 +1,8 @@
 package com.jw.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jw.Response;
+import com.jw.entity.MakeupExamUName;
 import com.jw.mapper.AssignmentMapper;
 import io.swagger.annotations.*;
 import lombok.EqualsAndHashCode;
@@ -120,10 +122,18 @@ public class AssignmentController {
                                    @RequestParam Integer pageCount,
                                    @RequestParam String type,
                                    @RequestParam Integer id){
+        System.out.println("findListByPage");
         if (type.equals("student")){
-            IPage<Assignment> listByPage = assignmentService.findListByPage(page, pageCount, id);
-            if (listByPage!=null)
-                return Response.yes(listByPage);
+//            IPage<Assignment> listByPage = assignmentService.findListByPage(page, pageCount, id);
+//            if (listByPage!=null)
+//                return Response.yes(listByPage);
+            int p = (page-1)*pageCount;
+            IPage<Assignment> iPage = new Page<>();
+            List<Assignment> assignmentByMId = assignmentMapper.findAssignmentByMId(p, pageCount, id);
+            iPage.setTotal(assignmentMapper.countAssignmentByMId(id));
+            iPage.setRecords(assignmentByMId);
+            return Response.yes(iPage);
+
         }else if (type.equals("teacher")){
             int p = (page-1)*pageCount;
             List<Assignment> assignmentByTeacherId = assignmentMapper.findAssignmentByTeacherId(p, pageCount, id);
