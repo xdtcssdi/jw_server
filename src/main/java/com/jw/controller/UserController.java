@@ -193,5 +193,51 @@ public class UserController {
         return a;
     }
 
+    @PostMapping("/resetinfo")
+    @ResponseBody
+    public Response resetinfo(@RequestParam("username") String username,
+                              @RequestParam("newusername") String newusername,
+                              @RequestParam("newpassword") String newpassword,
+                              @RequestParam("type") String type){
+
+        if ("student".equals(type)) {
+            QueryWrapper<Student> w = new QueryWrapper<>();
+            w.eq("username", username);
+            Student one = studentService.getOne(w);
+            one.setUsername(newusername);
+            one.setPassword(newpassword);
+            int i = studentService.updateData(one);
+            if (i!=0)
+                return Response.yes(one);
+            return Response.no("更新失败");
+        }
+
+        if ("jw".equals(type)) {
+            QueryWrapper<User> w = new QueryWrapper<>();
+            w.eq("name", username);
+            User one = iUserService.getOne(w);
+            one.setName(newusername);
+            one.setPassword(newpassword);
+            int i = iUserService.updateData(one);
+            if (i!=0)
+                return Response.yes(one);
+            return Response.no("登录失败");
+        }
+
+        if ("teacher".equals(type)) {
+            QueryWrapper<Teacher> w = new QueryWrapper<>();
+            w.eq("username", username);
+            Teacher one = iTeacherService.getOne(w);
+            one.setUsername(newusername);
+            one.setPassword(newpassword);
+            int i = iTeacherService.updateData(one);
+            if (i!=0)
+                return Response.yes(one);
+            return Response.no("登录失败");
+        }
+        return Response.no("登录失败");
+    }
+
+
 
 }
