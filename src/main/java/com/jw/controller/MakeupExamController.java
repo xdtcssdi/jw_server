@@ -3,16 +3,13 @@ package com.jw.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jw.Response;
-import com.jw.entity.Assignment;
-import com.jw.entity.Exam;
-import com.jw.entity.MakeupExamUName;
+import com.jw.entity.*;
 import com.jw.mapper.MakeupExamMapper;
 import com.jw.service.IExamService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.web.bind.annotation.*;
 import com.jw.service.IMakeupExamService;
-import com.jw.entity.MakeupExam;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -130,4 +127,11 @@ public class MakeupExamController {
         return Response.no("查找失败");
     }
 
+    @ApiOperation(value = "课程选择")
+    @GetMapping("/select")
+    public Response select(){
+        List<Res1> options = makeupExamMapper.options();
+        return Response.yes(options);
+    }
 }
+

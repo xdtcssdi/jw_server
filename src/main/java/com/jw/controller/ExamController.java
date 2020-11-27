@@ -1,6 +1,9 @@
 package com.jw.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jw.Response;
+import com.jw.entity.ExamInfo;
+import com.jw.mapper.ExamMapper;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +17,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * <p>
@@ -33,6 +38,8 @@ public class ExamController {
     @Resource
     private IExamService examService;
 
+    @Resource
+    private ExamMapper examMapper;
 
     @ApiOperation(value = "新增")
     @PostMapping()
@@ -69,10 +76,23 @@ public class ExamController {
     @GetMapping()
     public Response findListByPage(@RequestParam Integer page,
                                    @RequestParam Integer pageCount){
-        IPage<Exam> listByPage = examService.findListByPage(page, pageCount);
-        if (listByPage!=null)
-            return Response.yes(listByPage);
-        return Response.no();
+
+//
+//        IPage<Exam> listByPage = examService.findListByPage(page, pageCount);
+//        if (listByPage!=null)
+//            return Response.yes(listByPage);
+//        return Response.no();
+        IPage<ExamInfo> listByPage = new Page<>();
+        try {
+            int p = (page - 1) * pageCount;
+            List<ExamInfo> all = examMapper.findAll(p, pageCount);
+            int count = examMapper.count();
+            listByPage.setRecords(all);
+            listByPage.setTotal(count);
+        }catch (Exception e){
+            return Response.no();
+        }
+        return Response.yes(listByPage);
     }
 
     @ApiOperation(value = "id查询")

@@ -1,6 +1,9 @@
 package com.jw.controller;
 
 import com.jw.Response;
+import com.jw.entity.Res1;
+import com.jw.entity.Res2;
+import com.jw.mapper.TeacherMapper;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +17,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * <p>
@@ -32,7 +37,8 @@ public class TeacherController {
 
     @Resource
     private ITeacherService teacherService;
-
+    @Resource
+    private TeacherMapper teacherMapper;
 
     @ApiOperation(value = "新增")
     @PostMapping()
@@ -87,6 +93,14 @@ public class TeacherController {
             return Response.yes(byId);
         }
         return Response.no();
+    }
+
+
+    @ApiOperation(value = "课程选择")
+    @GetMapping("/select")
+    public Response select(){
+        List<Res2> options = teacherMapper.options();
+        return Response.yes(options);
     }
 
 }

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.jw.entity.MakeupExam;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.jw.entity.MakeupExamUName;
+import com.jw.entity.Res1;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -106,4 +107,9 @@ public interface MakeupExamMapper extends BaseMapper<MakeupExam> {
             "ON exam.teacher_id = teacher.id\n" +
             "WHERE student.id = #{id}")
     int countByStudent(@Param("id") Integer id);
+
+
+    @Select("SELECT DISTINCT classes, exam_id FROM makeup_exam")
+    List<Res1> options();
 }
+

@@ -1,6 +1,8 @@
 package com.jw.mapper;
 
 import com.jw.entity.MakeupExamUName;
+import com.jw.entity.Res1;
+import com.jw.entity.Res2;
 import com.jw.entity.Teacher;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -79,4 +81,6 @@ public interface TeacherMapper extends BaseMapper<Teacher> {
             "jw.teacher.id = #{id}")
     int count1(@Param("id") Integer id);
 
+    @Select("SELECT DISTINCT id, username FROM teacher")
+    List<Res2> options();
 }
